@@ -1,0 +1,372 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/pets": {
+      "get": {
+        "description": "Retrieve a list of all pets in the store. Optionally filter by status.",
+        "operationId": "PetsController_findAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter pets by availability status",
+            "schema": {
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of pets.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all pets",
+        "tags": [
+          "pets"
+        ]
+      },
+      "post": {
+        "description": "Add a new pet to the store.",
+        "operationId": "PetsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The pet has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data provided."
+          }
+        },
+        "summary": "Add a new pet",
+        "tags": [
+          "pets"
+        ]
+      }
+    },
+    "/pets/{id}": {
+      "get": {
+        "description": "Retrieve a specific pet details by its unique identifier.",
+        "operationId": "PetsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pet has been successfully found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet with specified ID was not found."
+          }
+        },
+        "summary": "Find a pet by ID",
+        "tags": [
+          "pets"
+        ]
+      },
+      "patch": {
+        "description": "Update details of an existing pet by ID.",
+        "operationId": "PetsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The pet has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data provided."
+          },
+          "404": {
+            "description": "Pet with specified ID was not found."
+          }
+        },
+        "summary": "Update an existing pet",
+        "tags": [
+          "pets"
+        ]
+      },
+      "delete": {
+        "description": "Delete a pet from the store by ID.",
+        "operationId": "PetsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pet has been successfully removed."
+          },
+          "404": {
+            "description": "Pet with specified ID was not found."
+          }
+        },
+        "summary": "Remove a pet",
+        "tags": [
+          "pets"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Pet Store API",
+    "description": "A simple and robust NestJS Pet Store API with OpenAPI documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "pets",
+      "description": "Operations related to pets"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the pet",
+            "example": "d3b07384-d113-4956-a5db-80d4b8d7eb8f"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the pet",
+            "example": "Max"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the pet",
+            "example": "Dogs"
+          },
+          "tags": {
+            "description": "Tags associated with the pet",
+            "example": [
+              "friendly",
+              "vaccinated"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photoUrls": {
+            "description": "URLs to photos of the pet",
+            "example": [
+              "https://example.com/pet/max.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The availability status of the pet",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ],
+            "example": "available"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "photoUrls",
+          "status"
+        ]
+      },
+      "CreatePetDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the pet",
+            "example": "Max"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the pet",
+            "example": "Dogs"
+          },
+          "tags": {
+            "description": "Tags associated with the pet",
+            "example": [
+              "friendly",
+              "vaccinated"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photoUrls": {
+            "description": "URLs to photos of the pet",
+            "example": [
+              "https://example.com/pet/max.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The availability status of the pet",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ],
+            "example": "available"
+          }
+        },
+        "required": [
+          "name",
+          "photoUrls",
+          "status"
+        ]
+      },
+      "UpdatePetDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the pet",
+            "example": "Max"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the pet",
+            "example": "Dogs"
+          },
+          "tags": {
+            "description": "Tags associated with the pet",
+            "example": [
+              "friendly",
+              "vaccinated"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photoUrls": {
+            "description": "URLs to photos of the pet",
+            "example": [
+              "https://example.com/pet/max.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The availability status of the pet",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ],
+            "example": "available"
+          }
+        }
+      }
+    }
+  }
+}
