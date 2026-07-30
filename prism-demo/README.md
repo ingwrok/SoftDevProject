@@ -172,6 +172,48 @@ curl -i "http://127.0.0.1:4010/pets?status=invalid-status"
 
 ---
 
+### 💡 Testing Response Validation (Troubleshooting & Gotchas)
+
+If you modify your NestJS response body (e.g. adding new fields or changing return types) but do not see a validation error from Prism, check the following:
+
+#### 1. Are you running the `mock` server instead of the `proxy`?
+* **If running `npm run mock`**: Prism generates mock responses directly from `openapi.json` and bypasses NestJS entirely. Changing NestJS code has no effect.
+* **Fix**: Ensure NestJS is running on port `3000` (`npm run start:dev`) and query the proxy on port `4010` running in validation mode:
+  ```bash
+  npm run proxy:validate
+  ```
+
+#### 2. Are you running the proxy without strict validation?
+* If you run `npm run proxy`, Prism will log warnings to the terminal but will still return a successful `200` status.
+* **Fix**: Run the strict validation script:
+  ```bash
+  npm run proxy:validate
+  ```
+
+#### 3. Is the property documented in your OpenAPI spec?
+* If you add a new property in your TypeScript model (like `flag?: boolean;`), it **will not** be validated unless it has the `@ApiProperty()` decorator. NestJS Swagger ignores properties without `@ApiProperty()`.
+* Furthermore, by default OpenAPI permits extra/undocumented properties. Returning undocumented fields will not cause a validation error unless you configure `additionalProperties: false` in the schema.
+
+#### 4. How to force a Response Validation Failure (Step-by-Step):
+To verify that response validation is working correctly:
+1. Open [src/pets/pets.service.ts](file:///D:/class-demo/prism-demo/src/pets/pets.service.ts) and temporarily change the seed data's status to an invalid value (which violates the documented `PetStatus` enum):
+   ```typescript
+   // In seedPets():
+   status: "invalid-status-value" as any,
+   ```
+2. Restart the NestJS server.
+3. Start the Prism proxy in strict mode:
+   ```bash
+   npm run proxy:validate
+   ```
+4. Query the proxy:
+   ```bash
+   curl -i http://127.0.0.1:4010/pets
+   ```
+5. **Expected Result**: Prism will block the response and return an HTTP `500 Internal Server Error` (instead of 200) because the server's response violates the schema contract.
+
+---
+
 ## 🧪 Testing
 
 Both E2E and unit tests are configured and verified:

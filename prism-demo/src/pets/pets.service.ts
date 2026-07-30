@@ -23,8 +23,8 @@ export class PetsService {
         photoUrls: [
           'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
         ],
-        status: PetStatus.AVAILABLE
-        //status: "not-a-valid-status" as any
+        //status: PetStatus.AVAILABLE,
+        status: "not-a-valid-status" as any
       },
       {
         id: '8f0a0d92-23c1-4bde-8f86-cfdf7a4fe299',

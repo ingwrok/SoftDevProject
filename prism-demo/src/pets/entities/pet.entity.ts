@@ -47,5 +47,4 @@ export class Pet {
     example: PetStatus.AVAILABLE,
   })
   status: PetStatus;
-
 }
